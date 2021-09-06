@@ -1,0 +1,87 @@
+body {
+    background: linear-gradient(#4F628E , #7887AB );
+    background-attachment: fixed;
+    text-align: center;
+  }
+  
+  h1 {
+    color: black;
+    text-align: center;
+    font-family: 'Montserrat Subrayada', sans-serif;
+    font-size: 4em;
+  }
+  
+  h2 {
+    color: black;
+    text-align: center;
+    font-family: 'Montserrat Subrayada', sans-serif;
+    font-size: 2em;
+  }
+  
+  .newBtn{
+    border: 1px solid black;
+    background-color: #FFFFFF;
+    font-size: large;
+    width: 15%;
+    height: 40px;
+    margin: 2px;
+  }
+  
+  /* game board table */
+  
+  #board td {
+     width: 63px;
+    height: 63px;
+    border: solid 1px #DDDFDE;
+    background-color: #DDDFDE;
+    border-radius: 15%;
+  }
+  
+  /* used flexbox to center board */
+  #game {
+     display: flex;
+     justify-content: center;
+  }
+  
+  /* pieces are div within game table cells: draw as colored circles */
+  
+  .piece {
+    /* TODO: make into circles <--done (border-radius) */  
+    margin: 5px;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+  }
+  
+  /* TODO: make pieces red/blue, depending on player 1/2 piece  <-- done */ 
+  /* changed red/blue to #3395DB/#041E7B */ 
+  .pieceColorP1 {
+    background-color: #3395DB;
+  }
+  
+  .pieceColorP2 {
+    background-color: #041E7B;
+    }
+  
+  /* column-top is table row of clickable areas for each column */
+  
+  #column-top td {
+    border: dashed 1px lightgray;
+  }
+  
+  /* Commented out gold hover default */
+  /* #column-top td:hover {
+    background-color: gold;
+  } */
+  
+  #column-top.p1HoverColor td:hover {
+    background-color: #3395DB;
+  }
+  
+  #column-top.p2HoverColor td:hover {
+    background-color: #041E7B;
+  }
+  
+  #column-top.gameOver td:hover {
+    background-color: #DDDFDE;
+  }
