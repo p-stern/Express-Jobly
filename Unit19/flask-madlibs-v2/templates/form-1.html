@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Madlib Form 1{% endblock %}
+{% block content %}
+
+<h1>Madlibs!</h1>
+<form action="/story">
+    <input type="hidden" name="param" value="1" />
+    <label for="noun">noun: </label>
+    <input type="text" name="noun" required onchange="hello()">
+    <br>
+    <br>
+    <label for="verb">verb: </label>
+    <input type="text" name="verb" required>
+    <br>
+    <br>
+    <button>Submit!</button>
+</form>
+
+{% endblock %}

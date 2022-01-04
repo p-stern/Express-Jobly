@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% extends 'base.html' %}
+{% block title %}Choose Madlib Form{% endblock %}
+{% block content %}
+
+<h1>Madlibs!</h1>
+<form action="/form">
+    <select name="form" id="form-select" required>
+        <option value="">-- Please choose a form --</option>
+        <option value="Form-1">Form 1 (noun, verb)</option>
+        <option value="Form-2">Form 2 (place noun, verb, adjective, plural noun)</option>
+        <option value="Form-3">Form 3 (noun, noun, adverb, adjective)</option>
+    </select>
+    <br>
+    <br>
+    <button>Submit!</button>
+</form>
+
+{% endblock %}
