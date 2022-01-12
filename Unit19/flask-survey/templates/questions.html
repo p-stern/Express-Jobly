@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Questions Page{% endblock %}
+{% block content %}
+
+<h1>{{question}}</h1>
+
+{% if next == 3 %}
+<form action="/answer" method="POST">
+    <input type="radio" name="radio_choice" value="Less Than $10,000" id="lt">
+    <label for="lt">Less Than $10,000</label>
+    <input type="radio" name="radio_choice" value="$10,000 or more" id="ge">
+    <label for="ge">$10,000 or more</label>
+    <br><br>
+    <button>Submit</button>
+</form>
+{% else %}
+<form action="/answer" method="POST">
+    <input type="radio" name="radio_choice" value="Yes" id="yes">
+    <label for="yes">Yes</label>
+    <input type="radio" name="radio_choice" value="No" id="no">
+    <label for="no">No</label>
+    <br><br>
+    <button>Submit</button>
+</form>
+{% endif %}
+
+{% endblock %}
