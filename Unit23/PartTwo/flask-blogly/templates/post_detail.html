@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Post Detail{% endblock %}
+{% block content %}
+
+<div class="m-3">
+    <h1>{{post.title}}</h1>
+    <br>
+    <div id="postContent">
+        {{post.content}}
+    </div>
+    <br><br>
+    <div id="postFullName">
+        By {{post.user.full_name}}
+    </div>
+    <br><br>
+
+    <form action="/this will be set in app.js" id="postDetailForm">
+        <input type="submit" class="btn btn-outline-primary" id="Cancel" onclick="getOrPost2(this,{{post.id}})"
+            name="action" value="Cancel" />
+        <input type="submit" class="btn btn-primary" id="Edit" onclick="getOrPost2(this,{{post.id}})" name="action"
+            value="Edit" />
+        <input type="submit" class="btn btn-danger" id="Delete" onclick="getOrPost2(this,{{post.id}})" name="action"
+            value="Delete" />
+    </form>
+
+</div>
+
+{% endblock %}
