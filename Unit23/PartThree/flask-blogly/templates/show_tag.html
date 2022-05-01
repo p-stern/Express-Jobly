@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Show Tag{% endblock %}
+{% block content %}
+
+<div class="m-3">
+    <h1>{{posts[0].tag.name}}</h1>
+    <ul>
+        {% for post in posts %}
+        <li><a href="/posts/{{post.post_id}}" style="text-decoration: none">{{post.post.title}}</a></li>
+        {% endfor %}
+    </ul>
+    <form action="/this will be set in app.js" id="showTag">
+        <input type="submit" class="btn btn-primary" id="Edit" onclick="getOrPost3(this,{{posts[0].tag.id}})"
+            name="action" value="Edit" />
+        <input type="submit" class="btn btn-danger" id="Delete" onclick="getOrPost3(this,{{posts[0].tag.id}})"
+            name="action" value="Delete" />
+    </form>
+</div>
+
+
+{% endblock %}

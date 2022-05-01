@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Edit Post{% endblock %}
+{% block content %}
+
+<div class="container m-3">
+    <h1>Edit Post</h1>
+    <form action="/posts/{{post.id}}/edit" method="POST">
+        <div class="form-group row">
+            <div class="column col-sm-6">
+                <label for="title" class="control-label">Title</label>
+                <br>
+                <input type="text" class="form-control" id=title name="title" value="{{post.title}}" required>
+            </div>
+        </div>
+        <br>
+        <div class=" form-group row">
+            <div class="column col-sm-6">
+                <label class="form-label" for="content">Content</label>
+                <textarea class="form-control" id="content" name="content" rows="3" required>{{post.content}}</textarea>
+            </div>
+        </div>
+        <br>
+
+        {% for tag in tags %}
+        {% if tag.id in checked %}
+        <div>
+            <input class="check{{tag.id}}" type="checkbox" value="{{tag.id}}" name="checkboxes" checked>
+            {{tag.name}}
+        </div>
+        {% else %}
+        <div>
+            <input class="check{{tag.id}}" type="checkbox" value="{{tag.id}}" name="checkboxes">
+            {{tag.name}}
+        </div>
+        {% endif %}
+        <br>
+        {% endfor %}
+
+        <br>
+        <div class="form-group float-end">
+            <input type="submit" class="btn btn-outline-info" name="action" value="Cancel" formnovalidate />
+            <input type="submit" class="btn btn-success" name="action" value="Edit" />
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}
