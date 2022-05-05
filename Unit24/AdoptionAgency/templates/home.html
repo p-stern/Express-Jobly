@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Home Pagee{% endblock %}
+{% block content %}
+
+<h1>Pets</h1>
+{% for msg in get_flashed_messages() %}
+<p>
+    {{msg}}
+</p>
+{% endfor %}
+<br>
+{% for pet in pets %}
+<div class="pet">
+    <div class="pic">
+        {% if pet.photo_url %}
+        <img src="{{pet.photo_url}}">
+        {% else %}
+        <img
+            src="https://2gyntc2a2i9a22ifya16a222-wpengine.netdna-ssl.com/wp-content/uploads/sites/29/2014/12/Image-Not-Available.jpg">
+        {% endif %}
+
+        <p class="pet"><b><a href="/{{pet.id}}">{{pet.name}}</a> {% if pet.available %}is available!{% endif
+                %}</b></p>
+    </div>
+</div>
+{% endfor %}
+
+</div>
+<br>
+<form action="/add" method="GET">
+    <button class=" btn btn-primary">Add Pet</button>
+</form>
+
+{% endblock %}
