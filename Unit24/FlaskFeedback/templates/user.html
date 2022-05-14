@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>User Info</h1>
+
+
+{% for field in user %}
+<div>Username: {{field.username}}
+    {% if session['username'] == field.username %}
+    <form style="display:inline" action="/users/{{field.username}}/delete" method="POST">
+        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+    </form>
+    {% endif %}
+</div>
+<br>
+<div>Email: {{field.email}}</div>
+<div>Name: {{field.first_name}} {{field.last_name}}</div>
+<br>
+<div><a href="/users/{{field.username}}/feedback/add">Add Feedback</a></div>
+{% endfor %}
+
+<div>
+    {% for feedback in all_feedback %}
+    <div class="my-3">
+        <!-- <div class="card-body"> -->
+        <h5 class="card-title text-info"><a href="/feedback/{{feedback.id}}/update">{{feedback.title}}</a>
+            {% if session['user_id'] == feedback.user_id %}
+            <form style="display:inline" action="/feedback/{{feedback.id}}/delete" method="POST">
+                <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+            </form>
+            {% endif %}
+        </h5>
+        <!-- </div> -->
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}
