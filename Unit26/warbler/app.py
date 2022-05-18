@@ -3,9 +3,9 @@ from pdb import Pdb
 
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
 
-from forms import UserAddForm, LoginForm, MessageForm
+from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
 from models import db, connect_db, User, Message
 
 CURR_USER_KEY = "curr_user"
@@ -215,8 +215,38 @@ def stop_following(follow_id):
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
-
+   
     # IMPLEMENT THIS
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get(g.user.id)
+    form = UserEditForm(obj=user)
+    
+    if form.validate_on_submit():       
+        user_auth = User.authenticate(g.user.username,
+                                 form.password.data)
+
+        if user_auth:
+            user.username=form.username.data
+            user.email=form.email.data
+            user.image_url=form.image_url.data
+            user.header_image_url=form.header_image_url.data
+            user.bio=form.bio.data
+            
+            try:
+                db.session.commit()
+                return redirect(f"/users/{user.id}")
+            except (InvalidRequestError, IntegrityError):
+                flash("Username and/or email already taken", 'danger')
+                return redirect("/users/profile")
+        else:
+            flash("Invalid password for user.", "danger")
+            return redirect("/")
+        
+    return render_template('users/edit.html', user=g.user, form=form)
+
 
 
 @app.route('/users/delete', methods=["POST"])
