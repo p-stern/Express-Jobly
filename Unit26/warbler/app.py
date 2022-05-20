@@ -1,12 +1,14 @@
 import os
 from pdb import Pdb
+from pyexpat.errors import messages
 
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
+import json 
 
 from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, Likes
 
 CURR_USER_KEY = "curr_user"
 
@@ -155,6 +157,7 @@ def users_show(user_id):
                 .order_by(Message.timestamp.desc())
                 .limit(100)
                 .all())
+
     return render_template('users/show.html', user=user, messages=messages)
 
 
@@ -210,6 +213,39 @@ def stop_following(follow_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}/following")
+
+
+@app.route('/users/<int:user_id>/likes')
+def users_likes(user_id):
+    """Show list of messages liked by this user."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    return render_template('/users/likes.html', user=user)
+
+
+@app.route('/users/add_like/<int:msg_id>', methods=['POST'])
+def add_like(msg_id):
+    """Allow user to like a warble."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    get_like = Likes.query.filter_by(user_id=g.user.id, message_id=msg_id).first()
+    
+    # If like isn't on table, add it; else delete it
+    if get_like is None:
+        new_like = Likes(user_id=g.user.id, message_id=msg_id)
+        db.session.add(new_like)
+    else:
+        db.session.delete(get_like)
+    db.session.commit()
+    
+    return redirect("/")
 
 
 @app.route('/users/profile', methods=["GET", "POST"])
@@ -334,8 +370,11 @@ def homepage():
             .filter(Message.user_id.in_(search_ids)) 
             .limit(100)
             .all())
+    
+        user_msgs = [msg.id for msg in g.user.messages]
+        likes = [msg.id for msg in g.user.likes]
 
-        return render_template('home.html', messages=messages)
+        return render_template('home.html', messages=messages, user_msgs=user_msgs, likes=likes)
 
     else:
         return render_template('home-anon.html')
