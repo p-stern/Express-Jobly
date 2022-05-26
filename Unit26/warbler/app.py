@@ -5,7 +5,7 @@ from pyexpat.errors import messages
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
-import json 
+import json
 
 from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
 from models import db, connect_db, User, Message, Likes
@@ -51,7 +51,7 @@ def do_login(user):
 
 def do_logout():
     """Logout user."""
-        
+
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
     return
@@ -82,7 +82,7 @@ def signup():
             db.session.commit()
 
         except IntegrityError:
-            flash("Username already taken", 'danger')
+            flash("Username and/or email already taken", 'danger')
             return render_template('users/signup.html', form=form)
 
         do_login(user)
@@ -116,7 +116,7 @@ def login():
 @app.route('/logout')
 def logout():
     """Handle logout of user."""
-    
+
     # IMPLEMENT THIS
     do_logout()
     flash("User logged out.", 'success')
@@ -234,9 +234,10 @@ def add_like(msg_id):
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    
-    get_like = Likes.query.filter_by(user_id=g.user.id, message_id=msg_id).first()
-    
+
+    get_like = Likes.query.filter_by(
+        user_id=g.user.id, message_id=msg_id).first()
+
     # If like isn't on table, add it; else delete it
     if get_like is None:
         new_like = Likes(user_id=g.user.id, message_id=msg_id)
@@ -244,14 +245,14 @@ def add_like(msg_id):
     else:
         db.session.delete(get_like)
     db.session.commit()
-    
+
     return redirect("/")
 
 
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
-   
+
     # IMPLEMENT THIS
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -259,18 +260,18 @@ def profile():
 
     user = User.query.get(g.user.id)
     form = UserEditForm(obj=user)
-    
-    if form.validate_on_submit():       
+
+    if form.validate_on_submit():
         user_auth = User.authenticate(g.user.username,
-                                 form.password.data)
+                                      form.password.data)
 
         if user_auth:
-            user.username=form.username.data
-            user.email=form.email.data
-            user.image_url=form.image_url.data
-            user.header_image_url=form.header_image_url.data
-            user.bio=form.bio.data
-            
+            user.username = form.username.data
+            user.email = form.email.data
+            user.image_url = form.image_url.data
+            user.header_image_url = form.header_image_url.data
+            user.bio = form.bio.data
+
             try:
                 db.session.commit()
                 return redirect(f"/users/{user.id}")
@@ -280,9 +281,8 @@ def profile():
         else:
             flash("Invalid password for user.", "danger")
             return redirect("/")
-        
-    return render_template('users/edit.html', user=g.user, form=form)
 
+    return render_template('users/edit.html', user=g.user, form=form)
 
 
 @app.route('/users/delete', methods=["POST"])
@@ -336,10 +336,15 @@ def messages_show(message_id):
 
 
 @app.route('/messages/<int:message_id>/delete', methods=["POST"])
-def messages_destroy(message_id):
+def messages_delete(message_id):
     """Delete a message."""
 
     if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    msg = Message.query.get_or_404(message_id)
+    if msg.user_id != g.user.id:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
@@ -362,15 +367,16 @@ def homepage():
     - logged in: 100 most recent messages of followed_users
     """
 
-    if g.user:      
-        search_ids = [g.user.id] + [followed.id for followed in g.user.following] 
+    if g.user:
+        search_ids = [g.user.id] + \
+            [followed.id for followed in g.user.following]
         messages = (Message
-            .query
-            .order_by(Message.timestamp.desc())
-            .filter(Message.user_id.in_(search_ids)) 
-            .limit(100)
-            .all())
-    
+                    .query
+                    .order_by(Message.timestamp.desc())
+                    .filter(Message.user_id.in_(search_ids))
+                    .limit(100)
+                    .all())
+
         user_msgs = [msg.id for msg in g.user.messages]
         likes = [msg.id for msg in g.user.likes]
 
