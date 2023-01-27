@@ -31,14 +31,14 @@ router.get('/:id', async (req, res, next) => {
             "amt": results.rows[0].amt,
             "paid": results.rows[0].paid,
             "add_date": results.rows[0].add_date,
-            "paid_date": results.rows[0].paid_date
+            "paid_date": results.rows[0].paid_date,
+            "company": {
+                "code": results.rows[0].code,
+                "name": results.rows[0].name,
+                "description": results.rows[0].description,
+            }
         }
-        const company = {
-            "code": results.rows[0].code,
-            "name": results.rows[0].name,
-            "description": results.rows[0].description,
-        }
-        return res.send({ "invoice": invoice, "company": company })
+        return res.send({ "invoice": invoice })
     } catch (e) {
         return next(e)
     }
